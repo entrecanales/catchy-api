@@ -2,7 +2,7 @@
 CREATE TABLE users (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
-    pass TEXT NOT NULL, -- Use hashed passwords
+    password TEXT NOT NULL, -- Use hashed passwords
     email VARCHAR(100) NOT NULL UNIQUE, --if your email is longer than 99 chars you're a psycho
     display_name VARCHAR(100) NOT NULL,
     birth_date DATE NOT NULL,

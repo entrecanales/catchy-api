@@ -1,9 +1,14 @@
 from typing import List, Optional
 
-from sqlalchemy import Boolean, CHAR, CheckConstraint, Column, Date, DateTime, ForeignKeyConstraint, Identity, Integer, PrimaryKeyConstraint, String, Table, Text, UniqueConstraint, text
+from sqlalchemy import (
+    Boolean, CHAR, CheckConstraint, Column, Date, DateTime, ForeignKeyConstraint, Identity, Integer,
+    PrimaryKeyConstraint, String, Table, Text, UniqueConstraint, text
+)
+from api.model.requests.authentication_requests import RegisterRequest
 from sqlalchemy.dialects.postgresql import INTERVAL
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 import datetime
+
 
 class Base(DeclarativeBase):
     pass
@@ -15,7 +20,8 @@ class Artists(Base):
         PrimaryKeyConstraint('id', name='artists_pkey'),
     )
 
-    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1,
+                                                      maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
     name: Mapped[str] = mapped_column(String(50))
     also_known_as: Mapped[Optional[str]] = mapped_column(Text)
     active_since: Mapped[Optional[str]] = mapped_column(CHAR(4))
@@ -30,8 +36,14 @@ class Artists(Base):
     genre: Mapped[List['Genre']] = relationship('Genre', secondary='artist_genre', back_populates='artists')
     tracks: Mapped[List['Tracks']] = relationship('Tracks', secondary='artist_tracks', back_populates='artists')
     users: Mapped[List['Users']] = relationship('Users', secondary='favorite_artists', back_populates='artists')
-    artists: Mapped[List['Artists']] = relationship('Artists', secondary='member_of', primaryjoin=lambda: Artists.id == t_member_of.c.band_fk, secondaryjoin=lambda: Artists.id == t_member_of.c.member_fk, back_populates='artists_')
-    artists_: Mapped[List['Artists']] = relationship('Artists', secondary='member_of', primaryjoin=lambda: Artists.id == t_member_of.c.member_fk, secondaryjoin=lambda: Artists.id == t_member_of.c.band_fk, back_populates='artists')
+    artists: Mapped[List['Artists']] = relationship('Artists', secondary='member_of',
+                                                    primaryjoin=lambda: Artists.id == t_member_of.c.band_fk,
+                                                    secondaryjoin=lambda: Artists.id == t_member_of.c.member_fk,
+                                                    back_populates='artists_')
+    artists_: Mapped[List['Artists']] = relationship('Artists', secondary='member_of',
+                                                     primaryjoin=lambda: Artists.id == t_member_of.c.member_fk,
+                                                     secondaryjoin=lambda: Artists.id == t_member_of.c.band_fk,
+                                                     back_populates='artists')
     artist_tags: Mapped[List['ArtistTags']] = relationship('ArtistTags', back_populates='artists')
 
 
@@ -42,7 +54,8 @@ class Genre(Base):
         UniqueConstraint('name', name='genre_name_key')
     )
 
-    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1,
+                                                      maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
     name: Mapped[str] = mapped_column(String(50))
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), server_default=text('now()'))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), server_default=text('now()'))
@@ -57,7 +70,8 @@ class Releases(Base):
         PrimaryKeyConstraint('id', name='releases_pkey'),
     )
 
-    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1,
+                                                      maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
     name: Mapped[str] = mapped_column(String(100))
     type: Mapped[Optional[str]] = mapped_column(String(10))
     release_date: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
@@ -77,7 +91,8 @@ class Tracks(Base):
         PrimaryKeyConstraint('id', name='tracks_pkey'),
     )
 
-    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1,
+                                                      maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
     name: Mapped[str] = mapped_column(String(100))
     release_date: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
     duration: Mapped[Optional[datetime.timedelta]] = mapped_column(INTERVAL)
@@ -97,9 +112,10 @@ class Users(Base):
         UniqueConstraint('username', name='users_username_key')
     )
 
-    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1,
+                                                      maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
     username: Mapped[str] = mapped_column(String(50))
-    pass_: Mapped[str] = mapped_column('pass', Text)
+    password: Mapped[str] = mapped_column('password', Text)
     email: Mapped[str] = mapped_column(String(100))
     display_name: Mapped[str] = mapped_column(String(100))
     birth_date: Mapped[datetime.date] = mapped_column(Date)
@@ -114,12 +130,40 @@ class Users(Base):
 
     artists: Mapped[List['Artists']] = relationship('Artists', secondary='favorite_artists', back_populates='users')
     releases: Mapped[List['Releases']] = relationship('Releases', secondary='favorite_releases', back_populates='users')
-    follower: Mapped[List['Users']] = relationship('Users', secondary='users_follows', primaryjoin=lambda: Users.id == t_users_follows.c.followed_id, secondaryjoin=lambda: Users.id == t_users_follows.c.follower_id, back_populates='followed')
-    followed: Mapped[List['Users']] = relationship('Users', secondary='users_follows', primaryjoin=lambda: Users.id == t_users_follows.c.follower_id, secondaryjoin=lambda: Users.id == t_users_follows.c.followed_id, back_populates='follower')
+    follower: Mapped[List['Users']] = relationship('Users', secondary='users_follows',
+                                                   primaryjoin=lambda: Users.id == t_users_follows.c.followed_id,
+                                                   secondaryjoin=lambda: Users.id == t_users_follows.c.follower_id,
+                                                   back_populates='followed')
+    followed: Mapped[List['Users']] = relationship('Users', secondary='users_follows',
+                                                   primaryjoin=lambda: Users.id == t_users_follows.c.follower_id,
+                                                   secondaryjoin=lambda: Users.id == t_users_follows.c.followed_id,
+                                                   back_populates='follower')
     ratings: Mapped[List['Ratings']] = relationship('Ratings', back_populates='users')
-    user_comment: Mapped[List['UserComment']] = relationship('UserComment', foreign_keys='[UserComment.author_fk]', back_populates='users')
-    user_comment_: Mapped[List['UserComment']] = relationship('UserComment', foreign_keys='[UserComment.user_profile_fk]', back_populates='users_')
+    user_comment: Mapped[List['UserComment']] = relationship('UserComment', foreign_keys='[UserComment.author_fk]',
+                                                             back_populates='users')
+    user_comment_: Mapped[List['UserComment']] = relationship('UserComment',
+                                                              foreign_keys='[UserComment.user_profile_fk]',
+                                                              back_populates='users_')
     user_lists: Mapped[List['UserLists']] = relationship('UserLists', back_populates='users')
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def from_request(self, request: RegisterRequest):
+        self.username = request.username
+        self.password = request.password
+        self.email = request.email
+        self.display_name = request.display_name
+        self.birth_date = request.birth_date
+        self.gender = request.gender
+        self.timezone = request.timezone
+        #  no created at/updated at, I'd rather set the value manually queries
+        self.location = request.location
+        #  no about yet obviously
+        self.website = request.website
+        #  no picture in this release
+        return self
 
 
 t_artist_genre = Table(
@@ -139,7 +183,8 @@ class ArtistTags(Base):
         PrimaryKeyConstraint('id', name='artist_tags_pkey')
     )
 
-    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1,
+                                                      maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
     tag_content: Mapped[str] = mapped_column(String(100))
     artist_fk: Mapped[int] = mapped_column(Integer)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), server_default=text('now()'))
@@ -198,7 +243,8 @@ class Ratings(Base):
         UniqueConstraint('user_fk', 'release_fk', name='ratings_user_fk_release_fk_key')
     )
 
-    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1,
+                                                      maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
     user_fk: Mapped[int] = mapped_column(Integer)
     release_fk: Mapped[int] = mapped_column(Integer)
     score: Mapped[int] = mapped_column(Integer)
@@ -234,11 +280,13 @@ class UserComment(Base):
     __tablename__ = 'user_comment'
     __table_args__ = (
         ForeignKeyConstraint(['author_fk'], ['users.id'], ondelete='CASCADE', name='user_comment_author_fk_fkey'),
-        ForeignKeyConstraint(['user_profile_fk'], ['users.id'], ondelete='CASCADE', name='user_comment_user_profile_fk_fkey'),
+        ForeignKeyConstraint(['user_profile_fk'], ['users.id'], ondelete='CASCADE',
+                             name='user_comment_user_profile_fk_fkey'),
         PrimaryKeyConstraint('id', name='user_comment_pkey')
     )
 
-    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1,
+                                                      maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
     content: Mapped[str] = mapped_column(String(500))
     author_fk: Mapped[int] = mapped_column(Integer)
     user_profile_fk: Mapped[int] = mapped_column(Integer)
@@ -256,7 +304,8 @@ class UserLists(Base):
         PrimaryKeyConstraint('id', name='user_lists_pkey')
     )
 
-    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1,
+                                                      maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
     user_fk: Mapped[int] = mapped_column(Integer)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), server_default=text('now()'))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), server_default=text('now()'))
@@ -282,7 +331,8 @@ class Reviews(Base):
         PrimaryKeyConstraint('id', name='reviews_pkey')
     )
 
-    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1,
+                                                      maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
     content: Mapped[str] = mapped_column(String(1000))
     rating_fk: Mapped[int] = mapped_column(Integer)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), server_default=text('now()'))
