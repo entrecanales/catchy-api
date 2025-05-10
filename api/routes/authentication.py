@@ -1,25 +1,21 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
 from api.controllers.authentication_controller import AuthenticationController
-from api.services.authentication_service import AuthenticationService
 from api.model.requests.authentication_requests import RegisterRequest
-from core.db import get_db
 
 
 router = APIRouter()
-controller = AuthenticationController(service=AuthenticationService())
 
 
 @router.post("/register")
-def register(request: RegisterRequest, db: Session = Depends(get_db)):
-    return controller.register(request, db)
+def register(request: RegisterRequest, controller: AuthenticationController = Depends()):
+    return controller.register(request)
 
 
 @router.post("/login")
-def login():
+def login(controller: AuthenticationController = Depends()):
     return controller.login()
 
 
 @router.get("/me")
-def me():
+def me(controller: AuthenticationController = Depends()):
     return controller.me()

@@ -9,11 +9,8 @@ class AuthenticationRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def new_user(self, user: User, db) -> User | None:
-        
-        # TODO: initialize the empty arguments to "" in the dict (no idk why this isnt green)
+    def new_user(self, user: User) -> User | None:
         # initialize the created_at att to now, the time and date of the operation
-        
         user.created_at = datetime.now(tz=timezone.utc)
         user.updated_at = datetime.now(tz=timezone.utc)
         user_dict = ModelHelper.model_to_dict(user)
@@ -28,5 +25,5 @@ class AuthenticationRepository:
                     :gender, :timezone, :created_at, :updated_at, :location, :website
                 )
             """)
-        db.execute(sql, user_dict)
-        db.commit()
+        self.db.execute(sql, user_dict)
+        self.db.commit()

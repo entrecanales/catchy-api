@@ -1,14 +1,17 @@
 from api.model.requests.authentication_requests import RegisterRequest
-from fastapi import HTTPException
+from api.services.authentication_service import AuthenticationService
+from fastapi import HTTPException, Depends
+from sqlalchemy.orm import Session
+from core.db import get_db
 
 
 class AuthenticationController:
-    def __init__(self, service):
-        self.service = service
+    def __init__(self, db: Session = Depends(get_db)):
+        self.service = AuthenticationService(db)
 
-    def register(self, request: RegisterRequest, db):
+    def register(self, request: RegisterRequest):
         try:
-            return self.service.register(request, db)
+            return self.service.register(request)
         except Exception as ex:
             raise HTTPException(status_code=500, detail=str(ex))
 

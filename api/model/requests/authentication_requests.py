@@ -13,6 +13,6 @@ class RegisterRequest(BaseModel):
     # could (probably should) be an enum in the future
     timezone: str = Field(title="Timezone", description="Timezone of the user's current location", max_length=50,
                           pattern=r"^[A-Za-z]+\/[A-Za-z_\-]+$")  # pattern = smth like Asia/Japan
-    location: str | None = Field(title="Location", description="User's current location, can be real or not",
+    location: str | None = Field(None, title="Location", description="User's current location, can be real or not",
                                  max_length=100)
-    website: str | None = Field(title="Website", description="User's website URL", max_length=100)
+    website: str | None = Field(None, title="Website", description="User's website URL", max_length=100)
