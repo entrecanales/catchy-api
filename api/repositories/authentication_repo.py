@@ -18,7 +18,6 @@ class AuthenticationRepository:
         ph = PasswordHasher()
         user.password = ph.hash(user.password)
         user_dict = ModelHelper.model_to_dict(user)
-        # print(user_dict)
         sql = text("""
                 INSERT INTO users (
                     username, password, email, display_name, birth_date,

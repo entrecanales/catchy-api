@@ -1,6 +1,8 @@
 from api.model.requests.authentication_requests import RegisterRequest
-from api.model.entities.generated_models import Users
+from api.model.entities.generated_models import Users as User
+from api.model.schemas.authentication_schemas import RegisteredUser
 from api.repositories.authentication_repo import AuthenticationRepository
+from api.helpers.email_helper import send_email
 
 
 class AuthenticationService:
@@ -9,9 +11,10 @@ class AuthenticationService:
         self.auth_repo = AuthenticationRepository(db)
 
     def register(self, request: RegisterRequest):
-        user = Users.from_request(request)
+        user = User.from_request(request)
         self.auth_repo.new_user(user)
-        return "Good!"
+        send_email(user.email)  # send a confirmation email to the user
+        return RegisteredUser.from_orm(user)
 
     def login(self):
         return "Login!"

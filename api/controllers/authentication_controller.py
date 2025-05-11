@@ -3,6 +3,7 @@ from api.services.authentication_service import AuthenticationService
 from fastapi import HTTPException, Depends
 from sqlalchemy.orm import Session
 from core.db import get_db
+from traceback import format_exc
 
 
 class AuthenticationController:
@@ -13,6 +14,7 @@ class AuthenticationController:
         try:
             return self.service.register(request)
         except Exception as ex:
+            print(format_exc())
             raise HTTPException(status_code=500, detail=str(ex))
 
     def login(self):

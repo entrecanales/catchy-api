@@ -6,7 +6,6 @@ from api.model.requests.authentication_requests import RegisterRequest
 router = APIRouter()
 
 
-# TODO: This send an email to the address to confim and needs to store the password ENCRYPTED
 @router.post("/register", status_code=201)
 def register(request: RegisterRequest, controller: AuthenticationController = Depends()):
     return controller.register(request)
