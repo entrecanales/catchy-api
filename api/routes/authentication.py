@@ -6,7 +6,7 @@ from api.model.requests.authentication_requests import RegisterRequest
 router = APIRouter()
 
 
-@router.post("/register", status_code=201)
+@router.post("/register", status_code=201)  # TODO: Add logging
 def register(request: RegisterRequest, controller: AuthenticationController = Depends()):
     return controller.register(request)
 

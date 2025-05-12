@@ -1,24 +1,40 @@
 from api.model.requests.authentication_requests import RegisterRequest
 from api.services.authentication_service import AuthenticationService
+from core.logger import get_logger
 from fastapi import HTTPException, Depends
 from sqlalchemy.orm import Session
 from core.db import get_db
-from traceback import format_exc
+import uuid
 
 
 class AuthenticationController:
     def __init__(self, db: Session = Depends(get_db)):
         self.service = AuthenticationService(db)
+        self.logger = get_logger('catchy')
 
     def register(self, request: RegisterRequest):
         try:
             return self.service.register(request)
         except Exception as ex:
-            print(format_exc())
-            raise HTTPException(status_code=500, detail=str(ex))
+            error_uuid = str(uuid.uuid4())
+            self.logger.error(f"[UUID - {error_uuid}] {ex}")
+            raise HTTPException(status_code=500, detail="Oops! Something went wrong. Contact an administrator \n" +
+                                f"and give them this reference number: {error_uuid}")
 
     def login(self):
-        return self.service.login
+        try:
+            return self.service.login
+        except Exception as ex:
+            error_uuid = str(uuid.uuid4())
+            self.logger.error(f"[UUID - {error_uuid}] {ex}")
+            raise HTTPException(status_code=500, detail="Oops! Something went wrong. Contact an administrator \n" +
+                                f"and give them this reference number: {error_uuid}")
 
     def me(self):
-        return self.service.me
+        try:
+            return self.service.me
+        except Exception as ex:
+            error_uuid = str(uuid.uuid4())
+            self.logger.error(f"[UUID - {error_uuid}] {ex}")
+            raise HTTPException(status_code=500, detail="Oops! Something went wrong. Contact an administrator \n" +
+                                f"and give them this reference number: {error_uuid}")
