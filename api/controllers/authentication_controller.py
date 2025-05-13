@@ -1,4 +1,4 @@
-from api.model.requests.authentication_requests import RegisterRequest
+from api.model.requests.authentication_requests import RegisterRequest, LoginRequest
 from api.services.authentication_service import AuthenticationService
 from core.logger import get_logger
 from fastapi import HTTPException, Depends
@@ -18,16 +18,16 @@ class AuthenticationController:
         except Exception as ex:
             error_uuid = str(uuid.uuid4())
             self.logger.error(f"[UUID - {error_uuid}] {ex}")
-            raise HTTPException(status_code=500, detail="Oops! Something went wrong. Contact an administrator \n" +
+            raise HTTPException(status_code=500, detail="Oops! Something went wrong. Contact an administrator " +
                                 f"and give them this reference number: {error_uuid}")
 
-    def login(self):
+    def login(self, request: LoginRequest):
         try:
-            return self.service.login
+            return self.service.login(request)
         except Exception as ex:
             error_uuid = str(uuid.uuid4())
             self.logger.error(f"[UUID - {error_uuid}] {ex}")
-            raise HTTPException(status_code=500, detail="Oops! Something went wrong. Contact an administrator \n" +
+            raise HTTPException(status_code=500, detail="Oops! Something went wrong. Contact an administrator " +
                                 f"and give them this reference number: {error_uuid}")
 
     def me(self):
@@ -36,5 +36,5 @@ class AuthenticationController:
         except Exception as ex:
             error_uuid = str(uuid.uuid4())
             self.logger.error(f"[UUID - {error_uuid}] {ex}")
-            raise HTTPException(status_code=500, detail="Oops! Something went wrong. Contact an administrator \n" +
+            raise HTTPException(status_code=500, detail="Oops! Something went wrong. Contact an administrator " +
                                 f"and give them this reference number: {error_uuid}")

@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from argon2 import PasswordHasher
 
 
-class AuthenticationRepository:
+class UserRepository:
     def __init__(self, db: Session):
         self.db = db
 
@@ -30,3 +30,12 @@ class AuthenticationRepository:
             """)
         self.db.execute(sql, user_dict)
         self.db.commit()
+
+    def get_user(self, username: str):
+        sql = text("""
+                SELECT username, password
+                FROM users
+                WHERE username = :username
+            """)
+        user = self.db.execute(sql, {"username": username}).fetchone()
+        return user

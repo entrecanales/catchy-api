@@ -16,3 +16,9 @@ class RegisterRequest(BaseModel):
     location: str | None = Field(None, title="Location", description="User's current location, can be real or not",
                                  max_length=100)
     website: str | None = Field(None, title="Website", description="User's website URL", max_length=100)
+
+
+class LoginRequest(BaseModel):
+    username: str = Field(title="Username", description="User's login name. Can have NO spaces",
+                          max_length=50, pattern=r"^\S+$")  # pattern = no spaces
+    password: str = Field(title="Password", description="Password the user will use to login")  # non-encrypted
