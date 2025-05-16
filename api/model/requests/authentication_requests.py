@@ -22,6 +22,16 @@ class RegisterRequest(BaseModel):
 
     @field_validator('password')
     def check_password(cls, v):
+        """
+        Checks a password contains:
+            - An uppercase letter
+            - A lowercase letter
+            - A number
+            - A symbol from '@$!%*?&'
+
+        - cls: the class
+        - v: the password string
+        """
         if not any(c.isupper() for c in v):
             raise ValueError("Password should at least have an upper case letter")
         if not any(c.islower() for c in v):

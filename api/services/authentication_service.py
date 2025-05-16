@@ -18,6 +18,11 @@ class AuthenticationService:
         self.user_repo = UserRepository(db)
 
     def register(self, request: RegisterRequest):
+        """
+        Adds the user to the database and sends an email if everything went well
+
+        - request: the user data
+        """
         user = User.from_request(request)
         try:
             self.user_repo.new_user(user)
@@ -27,7 +32,13 @@ class AuthenticationService:
         return RegisteredUser.from_orm(user)
 
     def login(self, request: LoginRequest):
-        user = self.user_repo.get_user(request.username)
+        """
+        Checks the user exists and, if it does, checks the password from the request is correct.
+        If everything went well returns a JWT token containing the username and login_date
+
+        - request: the username and password
+        """
+        user = self.user_repo.get_user_with_password(request.username)
         if (user is None):
             raise AuthenticationException("User doesn't exist")
         # Check the password is correct
@@ -43,5 +54,14 @@ class AuthenticationService:
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
         return token
 
-    def me(self):
-        return "Me! Me! Me!"
+    def me(self, token: str):
+        """
+        Decodes the JWT token and gets the full user from the username in the token
+
+        - token: the JWT token
+        """
+        user_payload = jwt.decode(token, SECRET_KEY, algorithms='HS256')
+        user = self.user_repo.get_user_by_name(user_payload["username"])
+        if (user is None):
+            raise AuthenticationException("User doesn't exist")
+        return RegisteredUser.from_orm(user)

@@ -7,6 +7,9 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def get_db() -> Session:
+    """
+    Creates a db object
+    """
     db = SessionLocal()
     try:
         yield db

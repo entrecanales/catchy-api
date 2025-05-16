@@ -4,6 +4,11 @@ from core.config import EMAIL_ADDR, EMAIL_APP_PASS, SMTP_SERVER, SMTP_PORT_TLS
 
 
 def send_email(usr_address: str):
+    """
+    Sends an email to an address
+
+    - usr_address: the email address
+    """
     # TODO: This is a RickRoll, I'll have to add an actual URL when this is deployed
     messageText = "Click on the following link to confirm your email and activate your account: https://rb.gy/tosbcy"
     message = MIMEText(messageText)
