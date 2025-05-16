@@ -19,9 +19,9 @@ class UserRepository:
         user.password = ph.hash(user.password)
         user_dict = ModelHelper.model_to_dict(user)
         sql = text("""
-                INSERT INTO users (
-                    username, password, email, display_name, birth_date,
-                    gender, timezone, created_at, updated_at, location, website
+            INSERT INTO users (
+                username, password, email, display_name, birth_date,
+                gender, timezone, created_at, updated_at, location, website
                 )
                 VALUES (
                     :username, :password, :email, :display_name, :birth_date,
