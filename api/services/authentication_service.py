@@ -48,7 +48,8 @@ class AuthenticationService:
         except VerificationError:
             raise AuthenticationException("Wrong Password")
         payload = {
-            'username': request.username,
+            'username': user.username,
+            'is_admin': user.is_admin,
             'login-date': datetime.now().isoformat()
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')

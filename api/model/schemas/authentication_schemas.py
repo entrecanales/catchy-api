@@ -10,6 +10,7 @@ class RegisteredUser(BaseModel):
     birth_date: date
     gender: str
     timezone: str
+    is_admin: bool
     location: Optional[str]
     website: Optional[str]
 

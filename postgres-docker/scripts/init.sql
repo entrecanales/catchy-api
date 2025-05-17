@@ -10,6 +10,7 @@ CREATE TABLE users (
     timezone VARCHAR(50) NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(), --TIMESTAMPZ = timezone aware timestamp
     updated_at TIMESTAMPTZ DEFAULT NOW(),
+    is_admin BOOLEAN DEFAULT 0 NOT NULL,
     location VARCHAR(100),
     about VARCHAR(500), --let's be concise, 500 is more than enough
     website VARCHAR(100),

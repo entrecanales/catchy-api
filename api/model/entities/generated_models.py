@@ -123,6 +123,7 @@ class Users(Base):
     timezone: Mapped[str] = mapped_column(String(50))
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), server_default=text('now()'))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), server_default=text('now()'))
+    is_admin: Mapped[bool] = mapped_column(Boolean(1))
     location: Mapped[Optional[str]] = mapped_column(String(100))
     about: Mapped[Optional[str]] = mapped_column(String(500))
     website: Mapped[Optional[str]] = mapped_column(String(100))
@@ -162,6 +163,7 @@ class Users(Base):
         self.location = request.location
         #  no about yet obviously
         self.website = request.website
+        self.is_admin = request.is_admin
         #  no picture in this release
         return self
 

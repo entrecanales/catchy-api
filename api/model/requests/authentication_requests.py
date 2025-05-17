@@ -16,6 +16,7 @@ class RegisterRequest(BaseModel):
     timezone: str = Field(title="Timezone", description="Timezone of the user's current location", max_length=50,
                           pattern=r"^[A-Za-z]+\/[A-Za-z_\-]+$")  # pattern = smth like Asia/Japan
     # America/New York and similar should have a _ instead of a space
+    is_admin: bool = Field(title="Is Admin", description="Whether the registered user will be an admin or not")
     location: str | None = Field(None, title="Location", description="User's current location, can be real or not",
                                  max_length=100)
     website: str | None = Field(None, title="Website", description="User's website URL", max_length=100)

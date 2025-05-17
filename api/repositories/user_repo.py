@@ -24,11 +24,11 @@ class UserRepository:
         sql = text("""
             INSERT INTO users (
                 username, password, email, display_name, birth_date,
-                gender, timezone, created_at, updated_at, location, website
+                gender, timezone, created_at, updated_at, is_admin, location, website
                 )
                 VALUES (
                     :username, :password, :email, :display_name, :birth_date,
-                    :gender, :timezone, :created_at, :updated_at, :location, :website
+                    :gender, :timezone, :created_at, :updated_at, :is_admin, :location, :website
                 )
             """)
         self.db.execute(sql, user_dict)
@@ -36,10 +36,10 @@ class UserRepository:
 
     def get_user_with_password(self, username: str):
         """
-        Gets the username and password from a user given the name
+        Gets the username, password and if it's an admin from a user given the name
         """
         sql = text("""
-                SELECT username, password
+                SELECT username, password, is_admin
                 FROM users
                 WHERE username = :username
             """)
@@ -52,7 +52,7 @@ class UserRepository:
         """
         sql = text("""
                 SELECT username, email, display_name, birth_date,
-                gender, timezone, created_at, updated_at, location, website
+                gender, timezone, created_at, updated_at, is_admin, location, website
                 FROM users
                 WHERE username = :username
             """)
