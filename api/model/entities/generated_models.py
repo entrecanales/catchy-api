@@ -5,6 +5,7 @@ from sqlalchemy import (
     PrimaryKeyConstraint, String, Table, Text, UniqueConstraint, text
 )
 from api.model.requests.authentication_requests import RegisterRequest
+from api.model.requests.artists_requests import AddArtistRequest
 from sqlalchemy.dialects.postgresql import INTERVAL
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 import datetime
@@ -45,6 +46,22 @@ class Artists(Base):
                                                      secondaryjoin=lambda: Artists.id == t_member_of.c.band_fk,
                                                      back_populates='artists')
     artist_tags: Mapped[List['ArtistTags']] = relationship('ArtistTags', back_populates='artists')
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def from_request(self, request: AddArtistRequest):
+        #  no created at/updated at, I'd rather set the value manually queries
+        self.name = request.name
+        self.also_known_as = request.also_known_as
+        self.active_since = request.active_since
+        self.inactive_since = request.inactive_since
+        self.country = request.country
+        self.official_website = request.official_website
+        self.spotify_url = request.spotify_url
+        self.is_group = request.is_group
+        return self
 
 
 class Genre(Base):

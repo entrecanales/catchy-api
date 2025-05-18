@@ -5,7 +5,6 @@ CREATE TABLE users (
     password TEXT NOT NULL, -- Use hashed passwords
     email VARCHAR(100) NOT NULL UNIQUE, --if your email is longer than 99 chars you're a psycho
     display_name VARCHAR(100) NOT NULL,
-    birth_date DATE NOT NULL,
     gender VARCHAR(16) NOT NULL,
     timezone VARCHAR(50) NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(), --TIMESTAMPZ = timezone aware timestamp
@@ -45,7 +44,7 @@ CREATE TABLE genre (
 -- Artists
 CREATE TABLE artists (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
+    name VARCHAR(50) NOT NULL UNIQUE,
     also_known_as TEXT,
     active_since CHAR(4), --char(4) = a year like 2001, 1984 or even 764
     inactive_since CHAR(4),

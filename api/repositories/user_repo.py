@@ -14,7 +14,7 @@ class UserRepository:
         """
         Adds a new user into the database
         """
-        # initialize the created_at att to now, the time and date of the operation
+        # initialize the created_at to now, the time and date of the operation
         user.created_at = datetime.now(tz=timezone.utc)
         user.updated_at = datetime.now(tz=timezone.utc)
         # encryption of the password before inserting into the db
