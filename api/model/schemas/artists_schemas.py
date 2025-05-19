@@ -2,7 +2,7 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict
 
 
-class AddedArtist(BaseModel):
+class CompleteArtist(BaseModel):
     id: int
     name: str
     also_known_as: Optional[str]
@@ -12,5 +12,12 @@ class AddedArtist(BaseModel):
     official_website: Optional[str]
     spotify_url: Optional[str]
     is_group: Optional[bool]
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class SimpleArtist(BaseModel):
+    id: int
+    name: str
 
     model_config = ConfigDict(from_attributes=True)
