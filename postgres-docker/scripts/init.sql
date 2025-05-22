@@ -90,6 +90,15 @@ CREATE TABLE releases (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Releases Artist
+CREATE TABLE release_artist (
+    artist_fk INT NOT NULL REFERENCES artists(id) ON DELETE CASCADE,
+    release_fk INT NOT NULL REFERENCES releases(id) ON DELETE CASCADE,
+    release_name VARCHAR(100) NOT NULL, --Redundant Column to force a unique constraint
+    UNIQUE (artist_fk, release_name)
+    PRIMARY KEY(artist_fk, release_fk)
+);
+
 -- Tracks
 CREATE TABLE tracks (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

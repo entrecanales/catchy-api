@@ -2,28 +2,28 @@ from core.db import get_db
 from core.logger import get_logger
 from fastapi import HTTPException, Depends, Response
 from sqlalchemy.orm import Session
-from api.services.artists_service import ArtistsService
-from api.model.requests.artists_requests import AddArtistRequest
-from api.model.exceptions.artists_exception import ArtistsException
+from api.services.releases_service import ReleasesService
+from api.model.requests.releases_requests import AddReleaseRequest
+from api.model.exceptions.releases_exception import ReleasesException
 from typing import Literal
 import uuid
 
 
-class ArtistsController:
+class ReleasesController:
     def __init__(self, db: Session = Depends(get_db)):
-        self.service = ArtistsService(db)
+        self.service = ReleasesService(db)
         self.logger = get_logger('catchy')
 
-    def add_artist(self, request: AddArtistRequest):
+    def add_release(self, request: AddReleaseRequest):
         """
-        [ADMIN ONLY] Adds a new artist to the database.
-        If operation is successful the artist is returned
+        [ADMIN ONLY] Adds a new release to the database.
+        If operation is successful the release is returned
 
-        - request: the artist data
+        - request: the release data
         """
         try:
-            return self.service.add_artist(request)
-        except ArtistsException as ex:
+            return self.service.add_release(request)
+        except ReleasesException as ex:
             raise HTTPException(status_code=400, detail=str(ex))
         except Exception as ex:
             error_uuid = str(uuid.uuid4())
@@ -31,18 +31,18 @@ class ArtistsController:
             raise HTTPException(status_code=500, detail="Oops! Something went wrong. Contact an administrator " +
                                 f"and give them this reference number: {error_uuid}")
 
-    def get_artists(self,
-                    page: int,
-                    rowsPerPage: int,
-                    search: str | None,
-                    order_by: Literal["id", "name"],
-                    order_asc: bool):
+    def get_releases(self,
+                     page: int,
+                     rowsPerPage: int,
+                     search: str | None,
+                     order_by: Literal["id", "name"],
+                     order_asc: bool):
         """
-        Gets the artists added in the website with paging
+        Gets the releases added in the website with paging
 
-        - **page**: the artists page
-        - **rowsPerPage**: how many artists there will be per page
-        - **search**: text to search an artist by their name
+        - **page**: the releases page
+        - **rowsPerPage**: how many releases there will be per page
+        - **search**: text to search an release by their name
         - **order_by**: the field the results will be ordered by.
         - **order_asc**: if the data will be sorted in ascending order
         """
@@ -51,11 +51,11 @@ class ArtistsController:
             raise HTTPException(status_code=400, detail="The search text, if not null, must not be empty")
         # Logic
         try:
-            artists = self.service.get_artists(page, rowsPerPage, search, order_by, order_asc)
-            if len(artists) == 0:
+            releases = self.service.get_releases(page, rowsPerPage, search, order_by, order_asc)
+            if len(releases) == 0:
                 return Response(status_code=204)
-            return artists
-        except ArtistsException as ex:
+            return releases
+        except ReleasesException as ex:
             raise HTTPException(status_code=400, detail=str(ex))
         except Exception as ex:
             error_uuid = str(uuid.uuid4())
@@ -63,18 +63,18 @@ class ArtistsController:
             raise HTTPException(status_code=500, detail="Oops! Something went wrong. Contact an administrator " +
                                 f"and give them this reference number: {error_uuid}")
 
-    def get_artist(self, artist_id: int):
+    def get_release(self, release_id: int):
         """
-        Gets an artist of a certain id
+        Gets an release of a certain id
 
-        - **artist_id**: id of an artist
+        - **release_id**: id of an release
         """
         # Logic
         try:
-            artist = self.service.get_artist(artist_id)
-            if artist is not None:
-                return artist
-        except ArtistsException as ex:
+            release = self.service.get_release(release_id)
+            if release is not None:
+                return release
+        except ReleasesException as ex:
             raise HTTPException(status_code=400, detail=str(ex))
         except Exception as ex:
             error_uuid = str(uuid.uuid4())

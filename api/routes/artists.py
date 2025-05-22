@@ -1,17 +1,17 @@
-from fastapi import APIRouter, Depends, HTTPException, Security, Path
+from fastapi import APIRouter, Depends, HTTPException, Path
 from fastapi.security import APIKeyHeader
-from api.helpers.auth_helper import get_current_user
+from api.helpers.auth_helper import get_current_user, validate_token
 from api.model.requests.artists_requests import AddArtistRequest
 from api.model.requests.paging_params import PagingParams
 from api.controllers.artists_controller import ArtistsController
 from typing import Annotated, Literal
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(validate_token)])
 api_key_header = APIKeyHeader(name="Authorization")
 
 
 @router.post("/artists", status_code=201)
-def add_artist(request: AddArtistRequest, token: str = Security(api_key_header),
+def add_artist(request: AddArtistRequest, user: dict = Depends(get_current_user),
                controller: ArtistsController = Depends()):
     """
     [ADMIN ONLY] Adds a new artist to the database
@@ -19,7 +19,6 @@ def add_artist(request: AddArtistRequest, token: str = Security(api_key_header),
 
     - **request**: Artist Data - the name, country of origin, the date it's been active since, etc.
     """
-    user = get_current_user(token)
     if not user.get("is_admin"):
         raise HTTPException(status_code=403, detail="Operation restricted for non-admin users")
     return controller.add_artist(request)
@@ -29,7 +28,6 @@ def add_artist(request: AddArtistRequest, token: str = Security(api_key_header),
 def get_artists(paging_query: PagingParams = Depends(),
                 order_by: Literal["id", "name"] = id,
                 order_asc: bool = False,
-                token: str = Security(api_key_header),
                 controller: ArtistsController = Depends()):
     """
     Gets the artists added in the website with paging
@@ -54,7 +52,6 @@ def get_artist(artist_id: Annotated[int, Path(
                 title="Artist id",
                 description="The id of the artist",
                 ge=0)],
-               token: str = Security(api_key_header),
                controller: ArtistsController = Depends()):
     """
     Gets the artist of a given id

@@ -13,7 +13,7 @@ class AddArtistRequest(BaseModel):
                                      ge=0,
                                      le=datetime.now().year)
     inactive_since: int | None = Field(None, title="Inactive Since",
-                                       description="The year the artis has been inactive since",
+                                       description="The year the artist has been inactive since",
                                        ge=0,
                                        le=datetime.now().year)
     country: str = Field(title="Country",

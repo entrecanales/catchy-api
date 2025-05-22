@@ -6,6 +6,7 @@ from sqlalchemy import (
 )
 from api.model.requests.authentication_requests import RegisterRequest
 from api.model.requests.artists_requests import AddArtistRequest
+from api.model.requests.releases_requests import AddReleaseRequest
 from sqlalchemy.dialects.postgresql import INTERVAL
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 import datetime
@@ -100,6 +101,19 @@ class Releases(Base):
     users: Mapped[List['Users']] = relationship('Users', secondary='favorite_releases', back_populates='releases')
     tracks: Mapped[List['Tracks']] = relationship('Tracks', secondary='release_tracks', back_populates='releases')
     ratings: Mapped[List['Ratings']] = relationship('Ratings', back_populates='releases')
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def from_request(self, request: AddReleaseRequest):
+        #  no created at/updated at, I'd rather set the value manually queries
+        self.name = request.name
+        self.type = request.type
+        self.release_date = request.release_date
+        self.language = request.language
+        self.artist = request.artist_id
+        return self
 
 
 class Tracks(Base):

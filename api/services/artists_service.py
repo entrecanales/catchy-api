@@ -35,6 +35,7 @@ class ArtistsService:
         - order_asc: if the data will be sorted in ascending order
         """
         artist_list = self.artists_repo.get_artists(page, rowsPerPage, search, order_by, order_asc)
+        print(len(artist_list))
         return [SimpleArtist.from_orm(a) for a in artist_list]
 
     def get_artist(self, artist_id: int):
