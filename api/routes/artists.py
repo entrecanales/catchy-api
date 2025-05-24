@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Path
 from fastapi.security import APIKeyHeader
 from api.helpers.auth_helper import get_current_user, validate_token
 from api.model.requests.artists_requests import AddArtistRequest
-from api.model.requests.paging_params import PagingParams
+from api.model.requests.paging_params import PagingParamsSearch
 from api.controllers.artists_controller import ArtistsController
 from typing import Annotated, Literal
 
@@ -25,7 +25,7 @@ def add_artist(request: AddArtistRequest, user: dict = Depends(get_current_user)
 
 
 @router.get("/artists", status_code=200, responses={204: {"description": "No Content"}})
-def get_artists(paging_query: PagingParams = Depends(),
+def get_artists(paging_query: PagingParamsSearch = Depends(),
                 order_by: Literal["id", "name"] = id,
                 order_asc: bool = False,
                 controller: ArtistsController = Depends()):

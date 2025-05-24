@@ -2,7 +2,7 @@ from api.model.requests.authentication_requests import RegisterRequest, LoginReq
 from api.model.entities.generated_models import Users as User
 from api.model.exceptions.authentication_exception import AuthenticationException
 from api.model.schemas.authentication_schemas import RegisteredUser
-from api.repositories.user_repo import UserRepository
+from api.repositories.users_repo import UsersRepository
 from api.helpers.email_helper import send_email
 from core.config import SECRET_KEY
 from argon2 import PasswordHasher
@@ -15,7 +15,7 @@ import jwt
 class AuthenticationService:
 
     def __init__(self, db):
-        self.user_repo = UserRepository(db)
+        self.users_repo = UsersRepository(db)
 
     def register(self, request: RegisterRequest):
         """
@@ -25,7 +25,7 @@ class AuthenticationService:
         """
         user = User.from_request(request)
         try:
-            self.user_repo.new_user(user)
+            self.users_repo.new_user(user)
         except IntegrityError:
             raise AuthenticationException("User already exists in the database")
         send_email(user.email)  # send a confirmation email to the user
@@ -38,7 +38,7 @@ class AuthenticationService:
 
         - request: the username and password
         """
-        user = self.user_repo.get_user_with_password(request.username)
+        user = self.users_repo.get_user_with_password(request.username)
         if (user is None):
             raise AuthenticationException("User doesn't exist")
         # Check the password is correct
@@ -62,7 +62,7 @@ class AuthenticationService:
         - token: the JWT token
         """
         user_payload = jwt.decode(token, SECRET_KEY, algorithms='HS256')
-        user = self.user_repo.get_user_by_name(user_payload["username"])
+        user = self.users_repo.get_user_by_name(user_payload["username"])
         if (user is None):
             raise AuthenticationException("User doesn't exist")
         return RegisteredUser.from_orm(user)

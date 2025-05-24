@@ -7,6 +7,7 @@ from sqlalchemy import (
 from api.model.requests.authentication_requests import RegisterRequest
 from api.model.requests.artists_requests import AddArtistRequest
 from api.model.requests.releases_requests import AddReleaseRequest
+from api.model.requests.reviews_requests import AddReviewRequest
 from sqlalchemy.dialects.postgresql import INTERVAL
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 import datetime
@@ -288,6 +289,18 @@ class Ratings(Base):
     users: Mapped['Users'] = relationship('Users', back_populates='ratings')
     reviews: Mapped[List['Reviews']] = relationship('Reviews', back_populates='ratings')
 
+    def __init__(self):
+        pass
+
+    @classmethod
+    def from_request(self, request: AddReviewRequest, user_id: int):
+        #  no created at/updated at, I'd rather set the value manually queries
+        #  the content from the request belongs to the review
+        self.user_fk = user_id
+        self.release_fk = request.release_id
+        self.score = request.score
+        return self
+
 
 t_release_genre = Table(
     'release_genre', Base.metadata,
@@ -367,11 +380,21 @@ class Reviews(Base):
     id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1,
                                                       maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
     content: Mapped[str] = mapped_column(String(1000))
-    rating_fk: Mapped[int] = mapped_column(Integer)
+    rating_fk: Mapped[Optional[int]] = mapped_column(Integer)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), server_default=text('now()'))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), server_default=text('now()'))
 
     ratings: Mapped['Ratings'] = relationship('Ratings', back_populates='reviews')
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def from_request(self, request: AddReviewRequest):
+        #  no created at/updated at, I'd rather set the value manually queries
+        #  only adds the content, the rest belongs to the rating
+        self.content = request.content
+        return self
 
 
 class UserListTracks(Base):

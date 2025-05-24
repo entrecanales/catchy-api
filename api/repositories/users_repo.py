@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from argon2 import PasswordHasher
 
 
-class UserRepository:
+class UsersRepository:
     def __init__(self, db: Session):
         self.db = db
 
@@ -51,7 +51,7 @@ class UserRepository:
         Gets every user attribute except for the password given the username
         """
         sql = text("""
-                SELECT username, email, display_name, birth_date,
+                SELECT id, username, email, display_name, birth_date,
                 gender, timezone, created_at, updated_at, is_admin, location, website
                 FROM users
                 WHERE username = :username

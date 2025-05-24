@@ -4,7 +4,7 @@ from fastapi import HTTPException, Depends, Response
 from sqlalchemy.orm import Session
 from api.services.releases_service import ReleasesService
 from api.model.requests.releases_requests import AddReleaseRequest
-from api.model.exceptions.releases_exception import ReleasesException
+from api.model.exceptions.business_exception import BusinessException
 from typing import Literal
 import uuid
 
@@ -23,7 +23,7 @@ class ReleasesController:
         """
         try:
             return self.service.add_release(request)
-        except ReleasesException as ex:
+        except BusinessException as ex:
             raise HTTPException(status_code=400, detail=str(ex))
         except Exception as ex:
             error_uuid = str(uuid.uuid4())
@@ -55,7 +55,7 @@ class ReleasesController:
             if len(releases) == 0:
                 return Response(status_code=204)
             return releases
-        except ReleasesException as ex:
+        except BusinessException as ex:
             raise HTTPException(status_code=400, detail=str(ex))
         except Exception as ex:
             error_uuid = str(uuid.uuid4())
@@ -74,7 +74,7 @@ class ReleasesController:
             release = self.service.get_release(release_id)
             if release is not None:
                 return release
-        except ReleasesException as ex:
+        except BusinessException as ex:
             raise HTTPException(status_code=400, detail=str(ex))
         except Exception as ex:
             error_uuid = str(uuid.uuid4())

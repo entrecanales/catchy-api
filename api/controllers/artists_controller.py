@@ -4,7 +4,7 @@ from fastapi import HTTPException, Depends, Response
 from sqlalchemy.orm import Session
 from api.services.artists_service import ArtistsService
 from api.model.requests.artists_requests import AddArtistRequest
-from api.model.exceptions.artists_exception import ArtistsException
+from api.model.exceptions.business_exception import BusinessException
 from typing import Literal
 import uuid
 
@@ -23,7 +23,7 @@ class ArtistsController:
         """
         try:
             return self.service.add_artist(request)
-        except ArtistsException as ex:
+        except BusinessException as ex:
             raise HTTPException(status_code=400, detail=str(ex))
         except Exception as ex:
             error_uuid = str(uuid.uuid4())
@@ -55,7 +55,7 @@ class ArtistsController:
             if len(artists) == 0:
                 return Response(status_code=204)
             return artists
-        except ArtistsException as ex:
+        except BusinessException as ex:
             raise HTTPException(status_code=400, detail=str(ex))
         except Exception as ex:
             error_uuid = str(uuid.uuid4())
@@ -74,7 +74,7 @@ class ArtistsController:
             artist = self.service.get_artist(artist_id)
             if artist is not None:
                 return artist
-        except ArtistsException as ex:
+        except BusinessException as ex:
             raise HTTPException(status_code=400, detail=str(ex))
         except Exception as ex:
             error_uuid = str(uuid.uuid4())

@@ -1,5 +1,5 @@
 from api.model.requests.authentication_requests import RegisterRequest, LoginRequest
-from api.model.exceptions.authentication_exception import AuthenticationException
+from api.model.exceptions.business_exception import BusinessException
 from api.services.authentication_service import AuthenticationService
 from core.logger import get_logger
 from fastapi import HTTPException, Depends
@@ -23,7 +23,7 @@ class AuthenticationController:
         """
         try:
             return self.service.register(request)
-        except AuthenticationException as ex:
+        except BusinessException as ex:
             raise HTTPException(status_code=400, detail=str(ex))
         except Exception as ex:
             error_uuid = str(uuid.uuid4())
@@ -39,7 +39,7 @@ class AuthenticationController:
         """
         try:
             return self.service.login(request)
-        except AuthenticationException as ex:
+        except BusinessException as ex:
             raise HTTPException(status_code=400, detail=str(ex))
         except Exception as ex:
             error_uuid = str(uuid.uuid4())

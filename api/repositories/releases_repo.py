@@ -56,8 +56,8 @@ class ReleasesRepository:
         Gets a number of releases from the database
         """
         sql = text(f"""
-            SELECT r.id, r.name, r.type, r.release_date, r.language, a.name as artist_name
-            FROM releases r INNER JOIN release_artist ra ON r.id = ra.release_fk INNER JOIN artists a ON ra.artist_fk = a.id
+            SELECT r.id, r.name, r.type, r.release_date, r.language, ra.artist_fk as artist_id
+            FROM releases r INNER JOIN release_artist ra ON r.id = ra.release_fk
             WHERE :search IS NULL OR r.name ILIKE :search --ILIKE because it's case insensitive
             ORDER BY {order_by} {'ASC' if order_asc else 'DESC'}
             LIMIT :limit OFFSET :offset
@@ -78,8 +78,8 @@ class ReleasesRepository:
         Gets an release from the database
         """
         sql = text("""
-            SELECT r.id, r.name, r.type, r.release_date, r.language, r.created_at, r.updated_at, a.name as artist_name
-            FROM releases r INNER JOIN release_artist ra ON r.id = ra.release_fk INNER JOIN artists a ON ra.artist_fk = a.id
+            SELECT r.id, r.name, r.type, r.release_date, r.language, r.created_at, r.updated_at, ra.artist_fk as artist_id
+            FROM releases r INNER JOIN release_artist ra ON r.id = ra.release_fk
             WHERE r.id = :release_id
             """)
 

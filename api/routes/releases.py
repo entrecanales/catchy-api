@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Path
 from fastapi.security import APIKeyHeader
 from api.helpers.auth_helper import get_current_user, validate_token
 from api.model.requests.releases_requests import AddReleaseRequest
-from api.model.requests.paging_params import PagingParams
+from api.model.requests.paging_params import PagingParamsSearch
 from api.controllers.releases_controller import ReleasesController
 from typing import Annotated, Literal
 
@@ -25,7 +25,7 @@ def add_release(request: AddReleaseRequest, user: dict = Depends(get_current_use
 
 
 @router.get("/releases", status_code=200, responses={204: {"description": "No Content"}})
-def get_releases(paging_query: PagingParams = Depends(), order_by: Literal["id", "name"] = id, order_asc: bool = False,
+def get_releases(paging_query: PagingParamsSearch = Depends(), order_by: Literal["id", "name"] = id, order_asc: bool = False,
                  controller: ReleasesController = Depends()):
     """
     Gets the releases added in the website with paging

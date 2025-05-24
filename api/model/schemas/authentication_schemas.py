@@ -4,6 +4,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 class RegisteredUser(BaseModel):
+    id: int
     username: str
     email: EmailStr
     display_name: str
